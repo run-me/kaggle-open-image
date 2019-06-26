@@ -1,6 +1,7 @@
 # For running inference on the TF-Hub module.
 import glob
 import io
+import os
 
 import tensorflow as tf
 import tensorflow_hub as hub
@@ -185,6 +186,19 @@ def image_list_generator(img_dir):
     return images
 
 
+def convert_predictions(prediction_dict):
+    prediction_string = ""
+    prediction_string_list = []
+    for i in range(len(prediction_dict["detection_scores"])):
+        prediction_string += prediction_dict["detection_class_names"][i].decode("utf-8") + " "\
+                             + str(prediction_dict["detection_scores"][i]) + " "\
+                             + " ".join(str(coord) for coord in prediction_dict["detection_boxes"][i])
+        prediction_string_list.append(prediction_string)
+
+    prediction_string_complete = " ".join(pred_string for pred_string in prediction_string_list)
+    return prediction_string_complete
+
+
 def image_feeder(image_path, new_width=256, new_height=256, display = False):
     pil_image = Image.open(image_path)
     resized_pil = ImageOps.fit(pil_image, (new_width, new_height), Image.ANTIALIAS)
@@ -198,6 +212,7 @@ def image_feeder(image_path, new_width=256, new_height=256, display = False):
 
 
 def run_model_inference(image_list):
+    prediction_dict = dict()
     prediction = []
     # image_url = "https://farm1.staticflickr.com/4032/4653948754_c0d768086b_o.jpg"  # @param
     # downloaded_image_path = download_and_resize_image(image_url, 1280, 856, True)
@@ -218,13 +233,15 @@ def run_model_inference(image_list):
         session.run(init_ops)
 
         for image in image_list:
+            image_id = os.path.basename(image)[:-4]
             img_byte = image_feeder(image, new_width=1280, new_height=856)
-
             prediction, image_out = session.run([result, decoded_image],
                                                 feed_dict={image_string_placeholder: img_byte})
-            prediction.append(prediction)
 
-    return prediction
+            pred_string = convert_predictions(prediction)
+            prediction_dict[image_id] = pred_string
+
+    return prediction_dict
 
 
 IMAGE_ROOT_DIR = "/media/breakthrough/plnarData/universe/dataset/" \
