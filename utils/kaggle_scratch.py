@@ -1,4 +1,7 @@
 # For running inference on the TF-Hub module.
+import glob
+import io
+
 import tensorflow as tf
 import tensorflow_hub as hub
 
@@ -176,18 +179,28 @@ def run_inference():
 
         display_image(image_with_boxes)
 
+
+def image_list_generator(img_dir):
+    images = glob.glob(img_dir + "/*")
+    return images
+
+
 def image_feeder(image_path, new_width=256, new_height=256, display = False):
     pil_image = Image.open(image_path)
     resized_pil = ImageOps.fit(pil_image, (new_width, new_height), Image.ANTIALIAS)
     rgb_converted = resized_pil.convert("RGB")
+    #TODO send back bytes image value
+    img_byte_array = io.BytesIO()
+    rgb_converted.save(img_byte_array, format='PNG')
     if display:
         display_image(rgb_converted)
-    return rgb_converted
+    return img_byte_array.getvalue()
 
 
 def run_model_inference(image_list):
-    image_url = "https://farm1.staticflickr.com/4032/4653948754_c0d768086b_o.jpg"  # @param
-    downloaded_image_path = download_and_resize_image(image_url, 1280, 856, True)
+    prediction = []
+    # image_url = "https://farm1.staticflickr.com/4032/4653948754_c0d768086b_o.jpg"  # @param
+    # downloaded_image_path = download_and_resize_image(image_url, 1280, 856, True)
     module_handle = "https://tfhub.dev/google/faster_rcnn/openimages_v4/inception_resnet_v2/1"
 
     with tf.Graph().as_default():
@@ -204,22 +217,26 @@ def run_model_inference(image_list):
         session = tf.Session()
         session.run(init_ops)
 
-        # Load the downloaded and resized image and feed into the graph.
-        with tf.gfile.Open(downloaded_image_path, "rb") as binfile:
-            image_string = binfile.read()
+        for image in image_list:
+            img_byte = image_feeder(image, new_width=1280, new_height=856)
 
-        # for images in image_list:
-        #     pil_image = image_feeder(images)
-        #     binfile = tf.gfile.Open(pil_image, "rb")
-        #     image_string = binfile.read()
+            # for images in image_list:
+            #     pil_image = image_feeder(images)
+            #     binfile = tf.gfile.Open(pil_image, "rb")
+            #     image_string = binfile.read()
 
-        result_out, image_out = session.run([result, decoded_image],
-                                            feed_dict={image_string_placeholder: image_string})
-        print("Found %d objects." % len(result_out["detection_scores"]))
+            result_out, image_out = session.run([result, decoded_image],
+                                                feed_dict={image_string_placeholder: img_byte})
+            print("Found %d objects." % len(result_out["detection_scores"]))
+            prediction.append(result_out)
 
-    return result_out
+    return prediction
 
+
+IMAGE_ROOT_DIR = "/media/breakthrough/plnarData/universe/dataset/" \
+                 "openSourced/google_openImage/test_kaggle"
 
 if __name__ == "__main__":
-    run_inference()
+    images = image_list_generator(IMAGE_ROOT_DIR)
+    run_model_inference(images)
 
