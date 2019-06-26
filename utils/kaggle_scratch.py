@@ -239,4 +239,3 @@ IMAGE_ROOT_DIR = "/media/breakthrough/plnarData/universe/dataset/" \
 if __name__ == "__main__":
     images = image_list_generator(IMAGE_ROOT_DIR)
     run_model_inference(images)
-
