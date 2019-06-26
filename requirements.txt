@@ -1,3 +1,6 @@
+six
+numpy
 tensorflow-gpu==1.12
+tensorflow-hub
 matplotlib
 pillow
