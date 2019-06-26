@@ -220,15 +220,9 @@ def run_model_inference(image_list):
         for image in image_list:
             img_byte = image_feeder(image, new_width=1280, new_height=856)
 
-            # for images in image_list:
-            #     pil_image = image_feeder(images)
-            #     binfile = tf.gfile.Open(pil_image, "rb")
-            #     image_string = binfile.read()
-
-            result_out, image_out = session.run([result, decoded_image],
+            prediction, image_out = session.run([result, decoded_image],
                                                 feed_dict={image_string_placeholder: img_byte})
-            print("Found %d objects." % len(result_out["detection_scores"]))
-            prediction.append(result_out)
+            prediction.append(prediction)
 
     return prediction
 
