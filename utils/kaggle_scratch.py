@@ -24,7 +24,6 @@ import time
 import glob
 import io
 import os
-import pandas as pd
 
 # Check available GPU devices.
 print("The following GPU devices are available: %s" % tf.test.gpu_device_name())
@@ -202,7 +201,7 @@ def convert_predictions(prediction_dict):
     return prediction_string_complete
 
 
-def image_feeder(image_path, new_width=256, new_height=256, display = False):
+def image_feeder(image_path, new_width=256, new_height=256, display=False):
     pil_image = Image.open(image_path)
     resized_pil = ImageOps.fit(pil_image, (new_width, new_height), Image.ANTIALIAS)
     rgb_converted = resized_pil.convert("RGB")
@@ -212,19 +211,6 @@ def image_feeder(image_path, new_width=256, new_height=256, display = False):
     if display:
         display_image(rgb_converted)
     return img_byte_array.getvalue()
-
-
-def update_pandas(pred_dict):
-
-    pass
-
-
-def save_json(dict, save_path):
-    with open(save_path, 'w') as jf:
-        json_data = json.load(jf)
-        json.dump(dict, jf)
-
-
 
 
 def run_model_inference(image_list):
@@ -262,12 +248,14 @@ def run_model_inference(image_list):
             prediction_dict[image_id] = pred_string
             images_count += 1
 
-
     return prediction_dict
 
 
 IMAGE_ROOT_DIR = "/media/breakthrough/plnarData/universe/dataset/" \
                  "openSourced/google_openImage/test_kaggle"
+
+JSON_PATH = "/media/breakthrough/plnarData/universe/dataset/openSourced/" \
+            "google_openImage/kaggle/kaggle-open-image/save_file.json"
 
 SUBMISSION_FILE = "/media/breakthrough/plnarData/universe/dataset/openSourced/" \
                   "google_openImage/submissions/sample_submission.csv"
@@ -277,4 +265,3 @@ if __name__ == "__main__":
     images = image_list_generator(IMAGE_ROOT_DIR)
     # run model inference with the list of images path generated above
     pred_dict = run_model_inference(images)
-
