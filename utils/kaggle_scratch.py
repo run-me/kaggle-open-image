@@ -1,7 +1,5 @@
 # For running inference on the TF-Hub module.
-import glob
-import io
-import os
+import json
 
 import tensorflow as tf
 import tensorflow_hub as hub
@@ -22,6 +20,11 @@ from PIL import ImageOps
 
 # For measuring the inference time.
 import time
+
+import glob
+import io
+import os
+import pandas as pd
 
 # Check available GPU devices.
 print("The following GPU devices are available: %s" % tf.test.gpu_device_name())
@@ -211,7 +214,21 @@ def image_feeder(image_path, new_width=256, new_height=256, display = False):
     return img_byte_array.getvalue()
 
 
+def update_pandas(pred_dict):
+
+    pass
+
+
+def save_json(dict, save_path):
+    with open(save_path, 'w') as jf:
+        json_data = json.load(jf)
+        json.dump(dict, jf)
+
+
+
+
 def run_model_inference(image_list):
+    images_count = 0
     prediction_dict = dict()
     prediction = []
     # image_url = "https://farm1.staticflickr.com/4032/4653948754_c0d768086b_o.jpg"  # @param
@@ -233,6 +250,9 @@ def run_model_inference(image_list):
         session.run(init_ops)
 
         for image in image_list:
+            if images_count % 10 == 0:
+                print("processed {} images".format(images_count))
+                print(prediction_dict.keys())
             image_id = os.path.basename(image)[:-4]
             img_byte = image_feeder(image, new_width=1280, new_height=856)
             prediction, image_out = session.run([result, decoded_image],
@@ -240,6 +260,8 @@ def run_model_inference(image_list):
 
             pred_string = convert_predictions(prediction)
             prediction_dict[image_id] = pred_string
+            images_count += 1
+
 
     return prediction_dict
 
@@ -247,6 +269,12 @@ def run_model_inference(image_list):
 IMAGE_ROOT_DIR = "/media/breakthrough/plnarData/universe/dataset/" \
                  "openSourced/google_openImage/test_kaggle"
 
+SUBMISSION_FILE = "/media/breakthrough/plnarData/universe/dataset/openSourced/" \
+                  "google_openImage/submissions/sample_submission.csv"
+
 if __name__ == "__main__":
+    # generate list of images in the root image directory for the inference
     images = image_list_generator(IMAGE_ROOT_DIR)
-    run_model_inference(images)
+    # run model inference with the list of images path generated above
+    pred_dict = run_model_inference(images)
+
