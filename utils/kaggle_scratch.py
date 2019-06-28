@@ -84,8 +84,10 @@ def run_model_inference(image_list):
             print(prediction_dict.keys())
         image_id = os.path.basename(image)[:-4]
         img_byte = image_feeder(image, new_width=1280, new_height=856)
-        prediction, image_out = session.run([model_output, model_input_image],
-                                            feed_dict={image_string_input: img_byte})
+
+        with tf.Graph().as_default():
+            prediction, image_out = session.run([model_output, model_input_image],
+                                                feed_dict={image_string_input: img_byte})
 
         pred_string = convert_predictions(prediction)
         prediction_dict[image_id] = pred_string
@@ -94,8 +96,7 @@ def run_model_inference(image_list):
     return prediction_dict
 
 
-IMAGE_ROOT_DIR = "/media/breakthrough/plnarData/universe/dataset/" \
-                 "openSourced/google_openImage/test_kaggle"
+IMAGE_ROOT_DIR = "/media/mash-compute/mWm_drive_00/dataset/kaggle_open_image/unzipped"
 
 JSON_PATH = "/media/breakthrough/plnarData/universe/dataset/openSourced/" \
             "google_openImage/kaggle/kaggle-open-image/save_file.json"
