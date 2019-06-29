@@ -1,6 +1,7 @@
 # For running inference on the TF-Hub module.
 import tensorflow as tf
 from model.base_model import BaseModel
+from utils.json_crud import JsonCRUD
 
 from PIL import Image
 from PIL import ImageOps
@@ -8,6 +9,7 @@ from PIL import ImageOps
 import glob
 import io
 import os
+from tqdm import tqdm
 
 # Check available GPU devices.
 print("The following GPU devices are available: %s" % tf.test.gpu_device_name())
@@ -19,6 +21,7 @@ def image_list_generator(img_dir):
 
 
 def convert_predictions(prediction_dict):
+    prediction_dict = prediction_dict[0]
     prediction_string = ""
     prediction_string_list = []
     for i in range(len(prediction_dict["detection_scores"])):
@@ -50,16 +53,12 @@ def run_model_inference(image_list):
     model = BaseModel()
     session, image_string_input, model_input_image, model_output = model.create_session()
 
-    for image in image_list:
-        if images_count % 10 == 0:
-            print("processed {} images".format(images_count))
-            print(prediction_dict.keys())
+    for image in tqdm(image_list):
         image_id = os.path.basename(image)[:-4]
         img_byte = image_feeder(image, new_width=1280, new_height=856)
 
         with tf.Graph().as_default():
-            prediction, image_out = session.run([model_output, model_input_image],
-                                                feed_dict={image_string_input: img_byte})
+            prediction = session.run([model_output], feed_dict={image_string_input: img_byte})
 
         pred_string = convert_predictions(prediction)
         prediction_dict[image_id] = pred_string
@@ -81,3 +80,5 @@ if __name__ == "__main__":
     root_images = image_list_generator(IMAGE_ROOT_DIR)
     # run model inference with the list of images path generated above
     pred_dict = run_model_inference(root_images)
+    json_ops = JsonCRUD().save_dict_to_json(pred_dict)
+

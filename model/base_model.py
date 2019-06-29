@@ -17,6 +17,7 @@ class BaseModel:
 			# Module accepts as input tensors of shape [1, height, width, 3], i.e. batch
 			# of size 1 and type tf.float32.
 			decoded_image_float = tf.image.convert_image_dtype(image=model_input_image, dtype=tf.float32)
+			# TODO create batch processing for input image tensor
 			module_input = tf.expand_dims(decoded_image_float, 0)
 
 			# Run model and obtain output
