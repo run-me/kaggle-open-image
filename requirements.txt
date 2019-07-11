@@ -6,7 +6,9 @@ tensorflow-hub
 matplotlib
 pillow
 
+# mmdetection requirements
 torch
 torchvision
 Cython
 mmcv
+terminaltables
