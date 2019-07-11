@@ -7,7 +7,7 @@ checkpoint_file = '../../checkpoints/cascaded_rcnn_x101_64x4d/cascade_rcnn_x101_
 model = init_detector(config_file, checkpoint_file, device='cuda:0')
 
 # test a single image and show the results
-img = '../../test_images/3.jpg'  # or img = mmcv.imread(img), which will only load it once
+img = '../../test_images/4.jpg'  # or img = mmcv.imread(img), which will only load it once
 result = inference_detector(model, img)
 show_result(img, result, model.CLASSES)
 
