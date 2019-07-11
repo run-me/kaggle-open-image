@@ -5,3 +5,4 @@
 *.xml
 **mmdetection
 **det_frameworks
+**pth
