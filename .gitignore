@@ -1,5 +1,7 @@
 **venv
 *__init__
 *__pycache__
+**.idea
+*.xml
+**mmdetection
 **det_frameworks
-*.pth

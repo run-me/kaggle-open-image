@@ -1,3 +1,4 @@
+tqdm
 six
 numpy
 tensorflow-gpu==1.12
