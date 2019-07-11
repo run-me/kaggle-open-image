@@ -5,5 +5,6 @@
 *.xml
 **mmdetection
 **pth
+*.json
 
 **checkpoints
