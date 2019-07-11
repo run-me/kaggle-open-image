@@ -4,5 +4,6 @@
 **.idea
 *.xml
 **mmdetection
-**det_frameworks
 **pth
+
+**checkpoints
