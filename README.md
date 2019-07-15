@@ -1,7 +1,5 @@
 # kaggle-open-image
-hello kaggle!
+An attempt to compete in the google open image object detection kaggle competition.
 
-# Install and inference instructions
-1. clone mmdetection repository into det_framework
-2. Make sure to install and setup mmdetection with virtual env setup, no need to do conda
-3. Download checkpoint of desired choice and keep it under checkpoint directory. refer c_rcnn_x101_inference.py for more
+# Frameworks used
+1. mmdetection : A object detection framework based on pytorch which supports SOTA models in object detection, checkout det_frameworks for more info
