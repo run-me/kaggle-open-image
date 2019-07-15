@@ -13,4 +13,5 @@ torch
 torchvision
 mmcv
 terminaltables
-
+yapf
+flake8
