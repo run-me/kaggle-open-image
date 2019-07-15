@@ -1,14 +1,15 @@
+# project requirements
 tqdm
 six
 numpy
-tensorflow-gpu==1.12
+tensorflow-gpu==1.14
 tensorflow-hub
 matplotlib
 pillow
 
 # mmdetection requirements
+Cython
 torch
 torchvision
-Cython
 mmcv
 terminaltables

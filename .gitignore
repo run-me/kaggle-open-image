@@ -1,10 +1,12 @@
+# directory ignores
 **venv
+**mmdetection
+**.idea
+**checkpoints
+
+# file ignores
 *__init__
 *__pycache__
-**.idea
 *.xml
-**mmdetection
-**pth
+*.pth
 *.json
-
-**checkpoints
