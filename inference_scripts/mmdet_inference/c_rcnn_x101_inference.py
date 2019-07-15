@@ -17,4 +17,5 @@ show_result(img, result, model.CLASSES)
 # for i, result in enumerate(inference_detector(model, imgs)):
 #     show_result(imgs[i], result, model.CLASSES, out_file='result_{}.jpg'.format(i))
 
+# pycocotools installation
 # https://stackoverflow.com/questions/56690223/ubuntu-18-04-lts-install-cocoapi/56722306#56722306
